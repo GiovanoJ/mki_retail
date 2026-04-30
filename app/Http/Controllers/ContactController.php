@@ -18,7 +18,7 @@ class ContactController extends Controller
             return back()->withErrors(['message' => 'Terlalu banyak permintaan. Coba lagi dalam beberapa menit.']);
         }
         \Illuminate\Support\Facades\RateLimiter::hit('contact:' . $request->ip(), 600);
-        
+
         $validated = $request->validate([
             'name'    => ['required', 'string', 'max:100'],
             'email'   => ['required', 'email', 'max:255'],
@@ -41,10 +41,12 @@ class ContactController extends Controller
             $body .= "Keperluan: {$subject}\n\n";
             $body .= "Pesan:\n{$message}\n";
 
+            $name = str_replace(["\r", "\n"], ' ', $validated['name']);
             Mail::raw($body, function ($mail) use ($validated, $subject, $name, $email) {
                 $mail
                     ->to(config('mail.contact_address', 'info@megakomposit.com'))
                     ->replyTo($email, $name)
+
                     ->subject("[Website] {$subject} — dari {$name}");
             });
 
