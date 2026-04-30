@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Promo;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -23,10 +24,10 @@ class ProductController extends Controller
         }
 
         $products = $query->latest()->paginate(24)->withQueryString();
+        $tabs     = array_merge(['all' => 'Semua'], Product::CATEGORIES);
+        $promos   = Promo::active()->get();
 
-        $tabs = array_merge(['all' => 'Semua'], Product::CATEGORIES);
-
-        return view('products.index', compact('products', 'tabs', 'activeTab'));
+        return view('products.index', compact('products', 'tabs', 'activeTab', 'promos'));
     }
 
     public function show(Product $product)

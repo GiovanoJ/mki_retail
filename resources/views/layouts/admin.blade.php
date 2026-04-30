@@ -34,6 +34,9 @@
                 <x-admin.nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.*')" icon="package">
                     Produk
                 </x-admin.nav-link>
+                <x-admin.nav-link :href="route('admin.promos.index')" :active="request()->routeIs('admin.promos.*')" icon="image">
+                    Promo
+                </x-admin.nav-link>
             </nav>
 
             {{-- User info + logout --}}

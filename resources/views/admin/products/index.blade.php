@@ -1,135 +1,358 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
-@section('title', 'Kelola Produk')
-@section('subtitle', 'Daftar semua produk di toko')
+@section('title', 'Produk')
 
 @section('content')
 
-    <div class="flex items-center justify-between mb-5">
-        <span class="text-xs text-gray-500 bg-gray-800 border border-gray-700 px-3 py-1.5 rounded-lg">
-            {{ $products->total() }} produk
-        </span>
-        <a href="{{ route('admin.products.create') }}"
-           class="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white text-sm px-4 py-2 rounded-lg transition-colors">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-            </svg>
-            Tambah Produk
-        </a>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+    .page-products {
+        font-family: 'DM Sans', sans-serif;
+        background: #f7f5f2;
+        min-height: 100vh;
+    }
+
+    /* ── Tabs ─────────────────────────────────────────────────── */
+    .tab-bar {
+        background: #fff;
+        border-bottom: 1px solid #e8e4df;
+        position: sticky;
+        top: 64px;
+        z-index: 40;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+    .tab-list {
+        display: flex;
+        gap: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+    .tab-list::-webkit-scrollbar { display: none; }
+    .tab-item {
+        flex-shrink: 0;
+        padding: 18px 22px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #9e9589;
+        border-bottom: 2px solid transparent;
+        text-decoration: none;
+        transition: color 0.2s, border-color 0.2s;
+        white-space: nowrap;
+    }
+    .tab-item:hover { color: #1a1612; }
+    .tab-item.active {
+        color: #1a1612;
+        border-bottom-color: #c8a96e;
+    }
+
+    /* ── Grid ─────────────────────────────────────────────────── */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2px;
+        background: #e8e4df;
+    }
+
+    /* ── Product card ─────────────────────────────────────────── */
+    .product-card {
+        background: #fff;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        text-decoration: none;
+        display: block;
+    }
+    .product-card:hover {
+        z-index: 2;
+        transform: scale(1.02);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .card-image {
+        aspect-ratio: 4/3;
+        background: #f0ebe3;
+        overflow: hidden;
+        position: relative;
+    }
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+    .product-card:hover .card-image img { transform: scale(1.08); }
+    .card-image-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f0ebe3, #e8e4df);
+    }
+    .card-image-placeholder svg { opacity: 0.25; }
+
+    .card-cats {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+    .cat-badge {
+        background: rgba(26,22,18,0.75);
+        color: #f0ebe3;
+        font-size: 0.65rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 2px;
+        backdrop-filter: blur(4px);
+    }
+
+    .card-body {
+        padding: 20px 22px 22px;
+        border-top: 1px solid #f0ebe3;
+    }
+    .card-name {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.15rem;
+        font-weight: 400;
+        color: #1a1612;
+        line-height: 1.3;
+        margin-bottom: 6px;
+        letter-spacing: -0.01em;
+    }
+    .card-price {
+        font-size: 0.85rem;
+        color: #c8a96e;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+    }
+    .card-swatches {
+        display: flex;
+        gap: 5px;
+        margin-top: 10px;
+        align-items: center;
+    }
+    .card-swatch {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(255,255,255,0.8);
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.12);
+    }
+    .card-variant-count {
+        font-size: 0.72rem;
+        color: #9e9589;
+        margin-top: 4px;
+    }
+
+    /* ── Empty state ──────────────────────────────────────────── */
+    .empty-state {
+        grid-column: 1 / -1;
+        padding: 100px 24px;
+        text-align: center;
+        background: #fff;
+    }
+    .empty-state h3 {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.8rem;
+        color: #1a1612;
+        font-weight: 300;
+        margin-bottom: 8px;
+    }
+    .empty-state p { color: #9e9589; font-size: 0.9rem; }
+
+    /* ── Pagination ───────────────────────────────────────────── */
+    .pagination-wrap nav > div:last-child {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        padding: 40px 0;
+    }
+    .pagination-wrap span[aria-current="page"] > span,
+    .pagination-wrap a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        padding: 0 8px;
+        font-size: 0.8rem;
+        border-radius: 3px;
+        border: 1px solid #e8e4df;
+        color: #1a1612;
+        text-decoration: none;
+        background: #fff;
+        transition: background 0.2s, border-color 0.2s;
+    }
+    .pagination-wrap a:hover {
+        background: #f7f5f2;
+        border-color: #c8a96e;
+    }
+    .pagination-wrap span[aria-current="page"] > span {
+        background: #1a1612;
+        border-color: #1a1612;
+        color: #fff;
+    }
+
+    /* ── Result info + search ─────────────────────────────────── */
+    .result-info {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 24px 24px 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+    .result-info p {
+        font-size: 0.8rem;
+        color: #9e9589;
+        letter-spacing: 0.03em;
+    }
+    .search-form {
+        display: flex;
+        gap: 8px;
+    }
+    .search-form input {
+        background: #fff;
+        border: 1px solid #e8e4df;
+        border-radius: 3px;
+        padding: 8px 14px;
+        font-size: 0.82rem;
+        font-family: 'DM Sans', sans-serif;
+        color: #1a1612;
+        outline: none;
+        width: 200px;
+        transition: border-color 0.2s;
+    }
+    .search-form input:focus { border-color: #c8a96e; }
+    .search-form input::placeholder { color: #c4bdb4; }
+    .search-form button {
+        background: #1a1612;
+        color: #f0ebe3;
+        border: none;
+        border-radius: 3px;
+        padding: 8px 16px;
+        font-size: 0.78rem;
+        font-family: 'DM Sans', sans-serif;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .search-form button:hover { background: #2d2721; }
+
+    .grid-wrap {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 24px 60px;
+    }
+</style>
+
+<div class="page-products">
+
+    <x-promo-hero :promos="$promos" />
+
+    <div class="tab-bar">
+        <div class="tab-list">
+            @foreach($tabs as $slug => $label)
+                <a href="{{ route('products.index', $slug !== 'all' ? ['category' => $slug] : []) }}"
+                   class="tab-item {{ $activeTab === $slug ? 'active' : '' }}">
+                    {{ $label }}
+                </a>
+            @endforeach
+        </div>
     </div>
 
-    <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
-        <table class="w-full text-sm">
-            <thead>
-                <tr class="border-b border-gray-800">
-                    <th class="text-left text-xs font-medium text-gray-500 px-4 py-3">Produk</th>
-                    <th class="text-left text-xs font-medium text-gray-500 px-4 py-3">Kategori</th>
-                    <th class="text-left text-xs font-medium text-gray-500 px-4 py-3">Harga Dasar</th>
-                    <th class="text-left text-xs font-medium text-gray-500 px-4 py-3">Varian</th>
-                    <th class="text-left text-xs font-medium text-gray-500 px-4 py-3">Total Stok</th>
-                    <th class="text-left text-xs font-medium text-gray-500 px-4 py-3">Status</th>
-                    <th class="text-right text-xs font-medium text-gray-500 px-4 py-3">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-800">
-                @forelse ($products as $product)
-                    <tr class="hover:bg-gray-800/40 transition-colors">
-                        <td class="px-4 py-3">
-                            <div>
-                                <p class="text-gray-200 font-medium leading-tight">{{ $product->name }}</p>
-                                <p class="text-xs text-gray-500 mt-0.5">ID #{{ $product->id }}</p>
-                                {{-- Color swatches dari varian --}}
-                                @php
-                                    $colorVariants = $product->variants->whereNotNull('color_hex')->take(6);
-                                @endphp
-                                @if($colorVariants->isNotEmpty())
-                                    <div class="flex items-center gap-1 mt-1.5">
-                                        @foreach($colorVariants as $v)
-                                            <div class="w-3.5 h-3.5 rounded-full border border-gray-700 shrink-0"
-                                                 style="background-color: {{ $v->color_hex }}"
-                                                 title="{{ $v->color_name ?? $v->color_hex }}"></div>
-                                        @endforeach
-                                        @if($product->variants->whereNotNull('color_hex')->count() > 6)
-                                            <span class="text-xs text-gray-600">+{{ $product->variants->whereNotNull('color_hex')->count() - 6 }}</span>
-                                        @endif
-                                    </div>
-                                @endif
-                            </div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <span class="text-xs bg-gray-800 border border-gray-700 text-gray-300 px-2.5 py-1 rounded-md">
-                                {{ implode(', ', $product->categoryLabels()) }}
-                            </span>
-                        </td>
-                        <td class="px-4 py-3 text-gray-300 text-xs">{{ $product->formattedPrice() }}</td>
-                        <td class="px-4 py-3">
-                            <a href="{{ route('admin.products.variants.index', $product) }}"
-                               class="inline-flex items-center gap-1.5 text-xs text-violet-400 hover:text-violet-300 bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/30 px-2.5 py-1 rounded-md transition-colors">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"/>
+    <div class="result-info">
+        <p>
+            {{ $products->total() }} produk ditemukan
+            @if($activeTab !== 'all')
+                dalam <strong style="color:#1a1612">{{ $tabs[$activeTab] ?? $activeTab }}</strong>
+            @endif
+        </p>
+        <form method="GET" action="{{ route('products.index') }}" class="search-form">
+            @if($activeTab !== 'all')
+                <input type="hidden" name="category" value="{{ $activeTab }}">
+            @endif
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari produk...">
+            <button type="submit">Cari</button>
+        </form>
+    </div>
+
+    <div class="grid-wrap">
+        <div class="products-grid">
+            @forelse($products as $product)
+                @php
+                    $img      = $product->firstImage();
+                    $variants = $product->variants;
+                    $swatches = $variants->filter(fn($v) => $v->colorHex())->take(5);
+                    $extraVars= $variants->count() - $swatches->count();
+                @endphp
+                <a href="{{ route('products.show', $product) }}" class="product-card">
+                    <div class="card-image">
+                        @if($img)
+                            <img src="{{ asset('storage/' . $img) }}" alt="{{ $product->name }}" loading="lazy">
+                        @else
+                            <div class="card-image-placeholder">
+                                <svg width="48" height="48" fill="none" stroke="#1a1612" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/>
                                 </svg>
-                                {{ $product->variants_count }} varian
-                            </a>
-                        </td>
-                        <td class="px-4 py-3">
-                            @php $totalStock = $product->variants->where('is_active', true)->sum('stock'); @endphp
-                            <span class="{{ $totalStock == 0 ? 'text-red-400' : 'text-gray-300' }}">
-                                {{ $totalStock }}
-                                @if($totalStock == 0 && $product->variants_count > 0)
-                                    <span class="ml-1 text-xs bg-red-500/15 text-red-400 border border-red-500/30 px-1.5 py-0.5 rounded">Habis</span>
-                                @endif
-                            </span>
-                        </td>
-                        <td class="px-4 py-3">
-                            @if($product->is_active)
-                                <span class="inline-flex items-center gap-1 text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 px-2.5 py-1 rounded-md">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Aktif
-                                </span>
-                            @else
-                                <span class="inline-flex items-center gap-1 text-xs bg-gray-700/50 text-gray-400 border border-gray-700 px-2.5 py-1 rounded-md">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-500"></span>Nonaktif
-                                </span>
-                            @endif
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('admin.products.variants.index', $product) }}"
-                                   class="text-xs text-violet-400 hover:text-violet-300 border border-violet-500/30 px-2.5 py-1.5 rounded-lg transition-colors">
-                                    Varian
-                                </a>
-                                <a href="{{ route('admin.products.edit', $product) }}"
-                                   class="text-xs text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 border border-gray-700 px-2.5 py-1.5 rounded-lg transition-colors">
-                                    Edit
-                                </a>
-                                <form action="{{ route('admin.products.destroy', $product) }}" method="POST"
-                                      onsubmit="return confirm('Hapus produk ini beserta SEMUA variannya?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 px-2.5 py-1.5 rounded-lg transition-colors">
-                                        Hapus
-                                    </button>
-                                </form>
                             </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="px-4 py-12 text-center">
-                            <svg class="w-8 h-8 text-gray-700 mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10"/>
-                            </svg>
-                            <p class="text-sm text-gray-500 mb-1">Belum ada produk</p>
-                            <a href="{{ route('admin.products.create') }}" class="text-xs text-violet-400 hover:text-violet-300">Tambah produk pertama</a>
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+                        @endif
+                        @if(count($product->categoryLabels()) > 0)
+                            <div class="card-cats">
+                                @foreach($product->categoryLabels() as $label)
+                                    <span class="cat-badge">{{ $label }}</span>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                    <div class="card-body">
+                        <div class="card-name">{{ $product->name }}</div>
+                        <div class="card-price">{{ $product->formattedPrice() }}</div>
+                        @if($swatches->isNotEmpty())
+                            <div class="card-swatches">
+                                @foreach($swatches as $v)
+                                    <span class="card-swatch"
+                                          style="background:{{ $v->colorHex() }}"
+                                          title="{{ $v->label() }}"></span>
+                                @endforeach
+                                @if($extraVars > 0)
+                                    <span class="card-variant-count">+{{ $extraVars }} lagi</span>
+                                @endif
+                            </div>
+                        @elseif($variants->count() > 1)
+                            <p class="card-variant-count">{{ $variants->count() }} varian tersedia</p>
+                        @endif
+                    </div>
+                </a>
+            @empty
+                <div class="empty-state">
+                    <h3>Belum ada produk</h3>
+                    <p>Coba pilih kategori lain atau hapus filter pencarian.</p>
+                </div>
+            @endforelse
+        </div>
+
+        @if($products->hasPages())
+            <div class="pagination-wrap">
+                {{ $products->links() }}
+            </div>
+        @endif
     </div>
 
-    @if($products->hasPages())
-        <div class="mt-4">{{ $products->links() }}</div>
-    @endif
+</div>
 
 @endsection
