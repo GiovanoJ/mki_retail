@@ -13,27 +13,6 @@
         min-height: 100vh;
     }
 
-    .hero-section {
-        padding: 48px 24px 40px;
-        background: #f7f5f2;
-    }
-    .hero-card {
-        max-width: 1280px;
-        margin: 0 auto;
-        border-radius: 16px;
-        overflow: hidden;
-        position: relative;
-        height: clamp(260px, 38vw, 480px);
-        box-shadow: 0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
-    }
-    .hero-card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-
-
     /* Tabs */
     .tab-bar {
         background: #fff;
@@ -72,7 +51,6 @@
         border-bottom-color: #c8a96e;
     }
 
-    /* Grid */
     .products-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -80,7 +58,6 @@
         background: #e8e4df;
     }
 
-    /* Product card */
     .product-card {
         background: #fff;
         cursor: pointer;
@@ -90,7 +67,11 @@
         text-decoration: none;
         display: block;
     }
-    .product-card:hover { z-index: 2; transform: scale(1.02); box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+    .product-card:hover {
+        z-index: 2;
+        transform: scale(1.02);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
 
     .card-image {
         aspect-ratio: 4/3;
@@ -158,6 +139,7 @@
         display: flex;
         gap: 5px;
         margin-top: 10px;
+        align-items: center;
     }
     .card-swatch {
         width: 14px;
@@ -172,7 +154,6 @@
         margin-top: 4px;
     }
 
-    /* Empty state */
     .empty-state {
         grid-column: 1 / -1;
         padding: 100px 24px;
@@ -188,7 +169,6 @@
     }
     .empty-state p { color: #9e9589; font-size: 0.9rem; }
 
-    /* Pagination */
     .pagination-wrap nav > div:last-child {
         display: flex;
         justify-content: center;
@@ -221,7 +201,6 @@
         color: #fff;
     }
 
-    /* Result info */
     .result-info {
         max-width: 1280px;
         margin: 0 auto;
@@ -236,10 +215,7 @@
         color: #9e9589;
         letter-spacing: 0.03em;
     }
-    .search-form {
-        display: flex;
-        gap: 8px;
-    }
+    .search-form { display: flex; gap: 8px; }
     .search-form input {
         background: #fff;
         border: 1px solid #e8e4df;
@@ -277,12 +253,7 @@
 </style>
 
 <div class="page-products">
-
-    <div class="hero-section">
-        <div class="hero-card">
-            <img src="{{ asset('img/card1.webp') }}" alt="Material Bangunan Premium">
-        </div>
-    </div>
+    <x-promo-hero :promos="$promos" />
 
     <div class="tab-bar">
         <div class="tab-list">
@@ -311,15 +282,14 @@
         </form>
     </div>
 
-    {{-- Grid --}}
     <div class="grid-wrap">
         <div class="products-grid">
             @forelse($products as $product)
                 @php
-                    $img       = $product->firstImage();
-                    $variants  = $product->variants;
-                    $swatches  = $variants->filter(fn($v) => $v->colorHex())->take(5);
-                    $extraVars = $variants->count() - $swatches->count();
+                    $img      = $product->firstImage();
+                    $variants = $product->variants;
+                    $swatches = $variants->filter(fn($v) => $v->colorHex())->take(5);
+                    $extraVars= $variants->count() - $swatches->count();
                 @endphp
                 <a href="{{ route('products.show', $product) }}" class="product-card">
                     <div class="card-image">
@@ -346,7 +316,9 @@
                         @if($swatches->isNotEmpty())
                             <div class="card-swatches">
                                 @foreach($swatches as $v)
-                                    <span class="card-swatch" style="background:{{ $v->colorHex() }}" title="{{ $v->label() }}"></span>
+                                    <span class="card-swatch"
+                                          style="background:{{ $v->colorHex() }}"
+                                          title="{{ $v->label() }}"></span>
                                 @endforeach
                                 @if($extraVars > 0)
                                     <span class="card-variant-count">+{{ $extraVars }} lagi</span>
