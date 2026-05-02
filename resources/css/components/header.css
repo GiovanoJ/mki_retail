@@ -1,0 +1,75 @@
+.site-header {
+    background: #f1de6d;
+    backdrop-filter: blur(12px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 50;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.site-header__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.site-header__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.site-header__logo {
+    width: 32px;
+    height: 32px;
+    background: #4f46e5;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.site-header__logo svg {
+    width: 16px;
+    height: 16px;
+    color: #fff;
+}
+
+.site-header__name {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #111827;
+}
+
+.site-header__nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.site-header__link {
+    padding: 6px 16px;
+    font-size: 0.875rem;
+    border-radius: 8px;
+    color: #000;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.site-header__link:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+.site-header__link--active {
+    background: #eef2ff;
+    color: #3730a3;
+    font-weight: 500;
+}

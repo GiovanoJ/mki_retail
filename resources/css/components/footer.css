@@ -1,0 +1,119 @@
+.site-footer {
+    background: #f1de6d;
+    border-top: 1px solid #f3f4f6;
+    margin-top: auto;
+}
+
+.site-footer__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 24px 24px;
+}
+
+.site-footer__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-bottom: 32px;
+}
+
+@media (max-width: 768px) {
+    .site-footer__grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+.site-footer__brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    text-decoration: none;
+}
+
+.site-footer__logo {
+    width: 32px;
+    height: 32px;
+    background: #4f46e5;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.site-footer__tagline {
+    font-size: 0.875rem;
+    color: #4b5563;
+    line-height: 1.6;
+    max-width: 280px;
+}
+
+.site-footer__heading {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1f2937;
+    margin-bottom: 12px;
+}
+
+.site-footer__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.site-footer__list a,
+.site-footer__list span {
+    font-size: 0.875rem;
+    color: #4b5563;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.site-footer__list a:hover {
+    color: #111827;
+}
+
+.site-footer__bottom {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.site-footer__copy {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.site-footer__socials {
+    display: flex;
+    gap: 8px;
+}
+
+.site-footer__social-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.site-footer__social-btn:hover {
+    background: #f9fafb;
+}
+
+.site-footer__social-btn svg {
+    width: 14px;
+    height: 14px;
+    color: #6b7280;
+}
