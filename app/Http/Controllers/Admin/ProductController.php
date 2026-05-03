@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $activeTab = $request->get('category', 'all');
-
-        $query = Product::active()
-            ->with(['variants' => fn($q) => $q->where('is_active', true)->orderBy('id')]);
-
-        if ($activeTab !== 'all') {
-            $query->inCategory($activeTab);
-        }
+        $query = Product::with(['variants' => fn($q) => $q->where('is_active', true)->orderBy('id')]);
 
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
@@ -24,16 +19,118 @@ class ProductController extends Controller
 
         $products = $query->latest()->paginate(24)->withQueryString();
 
-        $tabs = array_merge(['all' => 'Semua'], Product::CATEGORIES);
-
-        return view('products.index', compact('products', 'tabs', 'activeTab'));
+        return view('admin.products.index', compact('products'));
     }
 
-    public function show(Product $product)
+    public function create()
     {
-        abort_if(! $product->is_active, 404);
-        $product->load(['variants' => fn($q) => $q->where('is_active', true)->orderBy('id')]);
+        $categories = Product::CATEGORIES;
+        return view('admin.products.create', compact('categories'));
+    }
 
-        return view('products.show', compact('product'));
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name'          => ['required', 'string', 'max:255'],
+            'category'      => ['nullable', 'array'],
+            'category.*'    => ['string'],
+            'price'         => ['required', 'numeric', 'min:0'],
+            'description'   => ['nullable', 'string'],
+            'is_active'     => ['boolean'],
+        ]);
+
+        $categories = array_values(array_filter(
+            $request->input('category', []),
+            fn($s) => array_key_exists($s, Product::CATEGORIES)
+        ));
+
+        $custom = $request->filled('custom_categories')
+            ? array_values(array_filter(array_map(
+                fn($s) => Str::slug(trim($s), '_'),
+                explode(',', $request->input('custom_categories'))
+              ), fn($s) => $s !== ''))
+            : [];
+
+        $allCategories = array_values(array_unique(array_merge($categories, $custom)));
+
+        $product = Product::create([
+            'name'        => $request->input('name'),
+            'slug'        => Str::slug($request->input('name')) . '-' . Str::lower(Str::random(4)),
+            'category'    => $allCategories,
+            'price'       => $request->input('price'),
+            'description' => $request->input('description'),
+            'is_active'   => $request->boolean('is_active', true),
+        ]);
+
+        return redirect()
+            ->route('admin.products.variants.index', $product)
+            ->with('success', "Produk \"{$product->name}\" berhasil dibuat. Sekarang tambahkan varian.");
+    }
+
+    public function edit(Product $product)
+    {
+        $categories = Product::CATEGORIES;
+        return view('admin.products.edit', compact('product', 'categories'));
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        $request->validate([
+            'name'          => ['required', 'string', 'max:255'],
+            'category'      => ['nullable', 'array'],
+            'category.*'    => ['string'],
+            'price'         => ['required', 'numeric', 'min:0'],
+            'description'   => ['nullable', 'string'],
+            'specs'         => ['nullable', 'array'],
+            'specs.*.key'   => ['nullable', 'string', 'max:100'],
+            'specs.*.value' => ['nullable', 'string', 'max:500'],
+            'is_active'     => ['boolean'],
+        ]);
+
+        $categories = array_values(array_filter(
+            $request->input('category', []),
+            fn($s) => array_key_exists($s, Product::CATEGORIES)
+        ));
+
+        $custom = $request->filled('custom_categories')
+            ? array_values(array_filter(array_map(
+                fn($s) => Str::slug(trim($s), '_'),
+                explode(',', $request->input('custom_categories'))
+              ), fn($s) => $s !== ''))
+            : [];
+
+        $allCategories = array_values(array_unique(array_merge($categories, $custom)));
+
+        $specs = array_values(array_filter(
+            array_map(fn($r) => [
+                'key'   => trim($r['key']   ?? ''),
+                'value' => trim($r['value'] ?? ''),
+            ], $request->input('specs', [])),
+            fn($r) => $r['key'] !== '' && $r['value'] !== ''
+        ));
+
+        $product->update([
+            'name'           => $request->input('name'),
+            'slug'           => Str::slug($request->input('name')) . '-' . Str::lower(Str::random(4)),
+            'category'       => $allCategories,
+            'price'          => $request->input('price'),
+            'description'    => $request->input('description'),
+            'specifications' => $specs,
+            'is_active'      => $request->boolean('is_active'),
+        ]);
+
+        return redirect()
+            ->route('admin.products.variants.index', $product)
+            ->with('success', "Produk \"{$product->name}\" berhasil diperbarui.");
+    }
+
+    public function destroy(Product $product)
+    {
+        $name = $product->name;
+        $product->delete();
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', "Produk \"{$name}\" berhasil dihapus.");
     }
 }
