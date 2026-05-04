@@ -29,10 +29,12 @@ class ContactController extends Controller
 
         try {
             $subject = $validated['subject'] ?? 'Pesan dari Website';
-            $name    = $validated['name'];
             $email   = $validated['email'];
             $phone   = $validated['phone'] ?? '-';
             $message = $validated['message'];
+
+            // Sanitize name before use in both body and mail headers
+            $name = str_replace(["\r", "\n"], ' ', $validated['name']);
 
             $body  = "Pesan baru dari website PT. Mega Komposit Indonesia\n\n";
             $body .= "Nama     : {$name}\n";
@@ -41,12 +43,10 @@ class ContactController extends Controller
             $body .= "Keperluan: {$subject}\n\n";
             $body .= "Pesan:\n{$message}\n";
 
-            $name = str_replace(["\r", "\n"], ' ', $validated['name']);
-            Mail::raw($body, function ($mail) use ($validated, $subject, $name, $email) {
+            Mail::raw($body, function ($mail) use ($subject, $name, $email) {
                 $mail
                     ->to(config('mail.contact_address', 'info@megakomposit.com'))
                     ->replyTo($email, $name)
-
                     ->subject("[Website] {$subject} — dari {$name}");
             });
 

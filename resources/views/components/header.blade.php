@@ -26,6 +26,11 @@
                       {{ request()->routeIs('contact') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-black hover:bg-gray-100 hover:text-gray-800' }}">
                 Contact
             </a>
+            <a href="{{ route('articles.index') }}"
+               class="px-4 py-1.5 text-sm rounded-lg transition-colors
+                      {{ request()->routeIs('articles.index') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-black hover:bg-gray-100 hover:text-gray-800' }}">
+                Article
+            </a>
         </nav>
 
     </div>

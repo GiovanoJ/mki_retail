@@ -37,6 +37,12 @@
                 <x-admin.nav-link :href="route('admin.promos.index')" :active="request()->routeIs('admin.promos.*')" icon="image">
                     Promo
                 </x-admin.nav-link>
+                <x-admin.nav-link
+                    :href="route('admin.articles.index')"
+                    :active="request()->routeIs('admin.articles.*')"
+                    icon="document">
+                    Artikel
+                </x-admin.nav-link>
             </nav>
 
             {{-- User info + logout --}}

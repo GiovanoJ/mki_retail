@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductVariantController as AdminVariantController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\PromoController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 
 Route::get('/', [ProductController::class, 'index'])->name('home');
 
@@ -17,6 +19,11 @@ Route::post('/contact', [ContactController::class, 'send'])->name('contact.send'
 Route::prefix('products')->name('products.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
     Route::get('/{product}', [ProductController::class, 'show'])->name('show');
+});
+
+Route::prefix('articles')->name('articles.')->group(function () {
+    Route::get('/',         [ArticleController::class, 'index'])->name('index');
+    Route::get('/{slug}',   [ArticleController::class, 'show'])->name('show');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -67,4 +74,15 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
         Route::delete('/{promo}',   [PromoController::class, 'destroy'])->name('destroy');
     });
 
+    Route::prefix('articles')->name('articles.')->group(function () {
+        Route::get('/',              [AdminArticleController::class, 'index'])->name('index');
+        Route::get('/create',        [AdminArticleController::class, 'create'])->name('create');
+        Route::post('/',             [AdminArticleController::class, 'store'])->name('store');
+        Route::get('/{article}/edit',[AdminArticleController::class, 'edit'])->name('edit');
+        Route::put('/{article}',     [AdminArticleController::class, 'update'])->name('update');
+        Route::delete('/{article}',  [AdminArticleController::class, 'destroy'])->name('destroy');
+
+        Route::post('/upload-image', [AdminArticleController::class, 'uploadImage'])->name('uploadImage');
+        Route::post('/remove-image', [AdminArticleController::class, 'removeImage'])->name('removeImage');
+    });
 });

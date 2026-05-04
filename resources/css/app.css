@@ -31,4 +31,7 @@
 @import './pages/products-show.css';
 @import './pages/contact.css';
 
+@import './pages/articles.css';
+@import './admin/articles.css';
+
 @import './admin/layout.css';
