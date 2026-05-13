@@ -1,0 +1,120 @@
+.ck.ck-editor {
+    border-radius: 8px !important;
+    overflow: hidden;
+    border: 1px solid #374151 !important;
+}
+
+.ck.ck-toolbar {
+    background: #1f2937 !important;
+    border-bottom: 1px solid #374151 !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    padding: 4px 6px !important;
+}
+
+.ck.ck-toolbar .ck-button {
+    color: #d1d5db !important;
+    border-radius: 4px !important;
+}
+
+.ck.ck-toolbar .ck-button:hover,
+.ck.ck-toolbar .ck-button.ck-on {
+    background: #374151 !important;
+    color: #f9fafb !important;
+}
+
+.ck.ck-toolbar .ck-button svg {
+    color: inherit !important;
+}
+
+.ck.ck-toolbar__separator {
+    background: #374151 !important;
+}
+
+.ck.ck-editor__editable {
+    background: #f9fafb !important;
+    color: #111827 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    min-height: 320px;
+    padding: 20px 24px !important;
+    font-family: 'DM Sans', ui-sans-serif, sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.75;
+    caret-color: #111827;
+}
+
+.ck.ck-editor__editable .ck-placeholder::before {
+    color: #9ca3af !important;
+}
+
+.ck.ck-editor__editable.ck-focused {
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+}
+
+.ck.ck-editor__editable h2,
+.ck.ck-editor__editable h3,
+.ck.ck-editor__editable h4 {
+    color: #111827 !important;
+}
+
+.ck.ck-editor__editable a {
+    color: #7c3aed !important;
+}
+
+.ck.ck-editor__editable blockquote {
+    border-left: 3px solid #7c3aed;
+    padding-left: 1em;
+    color: #374151 !important;
+}
+
+.ck.ck-editor__editable table td,
+.ck.ck-editor__editable table th {
+    border-color: #d1d5db !important;
+    color: #111827 !important;
+}
+
+.ck.ck-balloon-panel,
+.ck.ck-dropdown__panel {
+    background: #1f2937 !important;
+    border-color: #374151 !important;
+    color: #f3f4f6 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.4) !important;
+}
+
+.ck.ck-dropdown__panel .ck-list__item .ck-button,
+.ck.ck-balloon-panel .ck-button {
+    color: #d1d5db !important;
+}
+
+.ck.ck-dropdown__panel .ck-list__item .ck-button:hover,
+.ck.ck-balloon-panel .ck-button:hover {
+    background: #374151 !important;
+    color: #f9fafb !important;
+}
+
+.ck.ck-list__item .ck-button.ck-on {
+    background: #4c1d95 !important;
+    color: #fff !important;
+}
+
+.ck.ck-balloon-panel .ck-input {
+    background: #111827 !important;
+    border-color: #4b5563 !important;
+    color: #f3f4f6 !important;
+    border-radius: 4px;
+}
+
+.ck.ck-editor__editable::-webkit-scrollbar {
+    width: 4px;
+}
+.ck.ck-editor__editable::-webkit-scrollbar-track {
+    background: transparent;
+}
+.ck.ck-editor__editable::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 2px;
+}
