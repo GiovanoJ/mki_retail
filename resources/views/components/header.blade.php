@@ -1,4 +1,4 @@
-<header class="bg-[#f1de6d] backdrop-blur-xl fixed top-0 left-0 w-full z-50 border-b border-white/20">
+<header class="bg-[#f1de6d]/70 backdrop-blur-xl fixed top-0 left-0 w-full z-50 border-b border-white/20">
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
 
         <a href="{{ route('home') }}" class="flex items-center gap-2.5">
@@ -11,11 +11,11 @@
         </a>
 
         <nav class="flex items-center gap-1">
-            {{-- <a href="{{ route('home') }}"
+            <a href="{{ route('home') }}"
                class="px-4 py-1.5 text-sm rounded-lg transition-colors
                       {{ request()->routeIs('home') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-black hover:bg-gray-100 hover:text-gray-800' }}">
                 Home
-            </a> --}}
+            </a>
             <a href="{{ route('products.index') }}"
                class="px-4 py-1.5 text-sm rounded-lg transition-colors
                       {{ request()->routeIs('products.*') ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-black hover:bg-gray-100 hover:text-gray-800' }}">

@@ -19,7 +19,7 @@
             <div>
                 <h4 class="text-sm font-medium text-gray-800 mb-3">Navigasi</h4>
                 <ul class="space-y-2">
-                    {{-- <li><a href="{{ route('home') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Home</a></li> --}}
+                    <li><a href="{{ route('home') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Home</a></li>
                     <li><a href="{{ route('products.index') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Produk</a></li>
                     <li><a href="{{ route('contact') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Contact</a></li>
                 </ul>
