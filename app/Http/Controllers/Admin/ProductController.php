@@ -53,9 +53,19 @@ class ProductController extends Controller
 
         $allCategories = array_values(array_unique(array_merge($categories, $custom)));
 
+        // Generate a stable base slug; append a short random suffix only to
+        // guarantee uniqueness at creation time. It will NOT change on updates.
+        $baseSlug = Str::slug($request->input('name'));
+        $slug     = $baseSlug;
+        $i        = 1;
+        while (Product::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . $i;
+            $i++;
+        }
+
         $product = Product::create([
             'name'        => $request->input('name'),
-            'slug'        => Str::slug($request->input('name')) . '-' . Str::lower(Str::random(4)),
+            'slug'        => $slug,
             'category'    => $allCategories,
             'price'       => $request->input('price'),
             'description' => $request->input('description'),
@@ -109,9 +119,23 @@ class ProductController extends Controller
             fn($r) => $r['key'] !== '' && $r['value'] !== ''
         ));
 
+        // STABILITY FIX: Keep the existing slug; only update slug if the name
+        // changed AND the derived slug would actually be different.
+        $slug = $product->slug;
+        if ($request->input('name') !== $product->name) {
+            $baseSlug  = Str::slug($request->input('name'));
+            $candidate = $baseSlug;
+            $i         = 1;
+            while (Product::where('slug', $candidate)->where('id', '!=', $product->id)->exists()) {
+                $candidate = $baseSlug . '-' . $i;
+                $i++;
+            }
+            $slug = $candidate;
+        }
+
         $product->update([
             'name'           => $request->input('name'),
-            'slug'           => Str::slug($request->input('name')) . '-' . Str::lower(Str::random(4)),
+            'slug'           => $slug,
             'category'       => $allCategories,
             'price'          => $request->input('price'),
             'description'    => $request->input('description'),

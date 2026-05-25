@@ -281,7 +281,7 @@
                 <p class="home-konsultasi__form-sub">Isi formulir ini — tim kami akan menghubungi Anda dalam 1×24 jam kerja.</p>
             </div>
 
-            <form action="{{ route('contact') }}" method="POST" class="home-konsultasi__form-body">
+            <form action="{{ route('contact.send') }}" method="POST" class="home-konsultasi__form-body">
                 @csrf
                 <div class="home-konsultasi__form-grid">
                     <div class="home-konsultasi__field">
@@ -290,13 +290,18 @@
                     </div>
                     <div class="home-konsultasi__field">
                         <label>No. WhatsApp</label>
-                        <input type="text" name="phone" placeholder="0812-xxxx-xxxx" required>
+                        <input type="text" name="phone" placeholder="0812-xxxx-xxxx">
                     </div>
                 </div>
 
                 <div class="home-konsultasi__field">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="budi@perusahaan.com" required>
+                </div>
+
+                <div class="home-konsultasi__field">
                     <label>Jenis Proyek</label>
-                    <select name="project_type">
+                    <select name="subject">
                         <option value="">Pilih jenis proyek...</option>
                         <option>Residensial / Rumah Tinggal</option>
                         <option>Gedung Komersial</option>
@@ -320,7 +325,9 @@
 
                 <div class="home-konsultasi__field">
                     <label>Deskripsi Singkat Kebutuhan</label>
-                    <textarea name="message" rows="3" placeholder="Contoh: Butuh wall panel untuk eksterior gedung 5 lantai di Jakarta, luas ±800 m²..."></textarea>
+                    <textarea name="message" rows="3"
+                            placeholder="Contoh: Butuh wall panel untuk eksterior gedung 5 lantai di Jakarta, luas ±800 m²..."
+                            required></textarea>
                 </div>
 
                 <button type="submit" class="home-konsultasi__submit">

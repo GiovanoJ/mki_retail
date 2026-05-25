@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
@@ -34,7 +33,8 @@ class ArticleController extends Controller
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
 
-        $validated['slug'] = Str::slug($validated['title']);
+        // Generate a unique slug (handles duplicates automatically)
+        $validated['slug'] = Article::generateUniqueSlug($validated['title']);
 
         if ($request->hasFile('thumbnail')) {
             $validated['thumbnail'] = $request->file('thumbnail')
@@ -67,7 +67,12 @@ class ArticleController extends Controller
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ]);
 
-        $validated['slug'] = Str::slug($validated['title']);
+        // Only regenerate slug if title changed, and keep it unique
+        if ($validated['title'] !== $article->title) {
+            $validated['slug'] = Article::generateUniqueSlug($validated['title'], $article->id);
+        } else {
+            $validated['slug'] = $article->slug;
+        }
 
         if ($request->hasFile('thumbnail')) {
             if ($article->thumbnail) {
@@ -115,19 +120,32 @@ class ArticleController extends Controller
         ]);
     }
 
+    /**
+     * Remove an image uploaded via CKEditor.
+     *
+     * SECURITY FIX: Instead of accepting a full URL and resolving it to a
+     * filesystem path (path-traversal risk), we now accept only the relative
+     * storage path that was returned by uploadImage(). We then verify the path
+     * is confined to the 'articles/content' directory before deleting.
+     */
     public function removeImage(Request $request)
     {
-        $request->validate(['image_url' => 'required|string']);
+        $request->validate([
+            'image_path' => ['required', 'string', 'max:500'],
+        ]);
 
-        $imagePath    = parse_url($request->image_url, PHP_URL_PATH);
-        $relativePath = ltrim(str_replace('/storage/', '', $imagePath), '/');
-        $filePath     = storage_path('app/public/' . $relativePath);
+        $relativePath = ltrim($request->input('image_path'), '/');
 
-        if (file_exists($filePath)) {
-            unlink($filePath);
+        // Restrict deletion to the articles/content directory only
+        if (! str_starts_with($relativePath, 'articles/content/')) {
+            return response()->json(['error' => 'Akses ditolak.'], 403);
+        }
+
+        if (Storage::disk('public')->exists($relativePath)) {
+            Storage::disk('public')->delete($relativePath);
             return response()->json(['message' => 'Gambar berhasil dihapus.']);
         }
 
-        return response()->json(['error' => 'Gambar tidak ditemukan.'], 400);
+        return response()->json(['error' => 'Gambar tidak ditemukan.'], 404);
     }
 }

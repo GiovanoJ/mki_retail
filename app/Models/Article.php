@@ -46,13 +46,31 @@ class Article extends Model
             : null;
     }
 
+    public static function generateUniqueSlug(string $title, ?int $ignoreId = null): string
+    {
+        $base = Str::slug($title);
+        $slug = $base;
+        $i    = 1;
+
+        while (
+            static::where('slug', $slug)
+                ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
+            $slug = $base . '-' . $i;
+            $i++;
+        }
+
+        return $slug;
+    }
+
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function (Article $article) {
             if (empty($article->slug)) {
-                $article->slug = Str::slug($article->title);
+                $article->slug = static::generateUniqueSlug($article->title);
             }
         });
     }
