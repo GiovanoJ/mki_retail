@@ -23,3 +23,43 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# ── Blokir akses langsung ke file sensitif ─────────────────────────────────
+<FilesMatch "\.(env|log|sqlite|sqlite3|db|json|lock|md|yaml|yml|gitignore|htpasswd)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# ── Blokir akses ke folder tersembunyi (.git, .env, dll) ───────────────────
+<IfModule mod_rewrite.c>
+    RewriteCond %{REQUEST_URI} ^/\. [NC]
+    RewriteRule ^ - [F,L]
+</IfModule>
+
+# ── Matikan directory listing ───────────────────────────────────────────────
+Options -Indexes
+
+# ── Sembunyikan signature server ───────────────────────────────────────────
+<IfModule mod_headers.c>
+    Header always unset X-Powered-By
+    Header unset X-Powered-By
+</IfModule>
+
+ServerSignature Off
+
+# ── Cache static assets ─────────────────────────────────────────────────────
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 30 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/webp "access plus 30 days"
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/x-icon "access plus 1 year"
+</IfModule>

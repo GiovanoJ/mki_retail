@@ -11,15 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        /*
-        |----------------------------------------------------------------------
-        | Custom Middleware Aliases
-        |----------------------------------------------------------------------
-        | admin.auth  → Protects admin-only routes. Redirects to login if not
-        |               authenticated.
-        | admin.guest → Prevents logged-in admins from seeing login/register.
-        |               Redirects to dashboard instead.
-        */
+
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
         $middleware->alias([
             'admin.auth'  => \App\Http\Middleware\AdminAuth::class,
             'admin.guest' => \App\Http\Middleware\AdminGuest::class,
