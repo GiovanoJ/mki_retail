@@ -39,14 +39,12 @@
     <div class="article-show__body-inner">
 
         {{--
-            SECURITY NOTE: CKEditor produces trusted HTML from authenticated
-            admin users. We output it raw here intentionally. If you ever allow
-            non-admin / user-generated content, add HTML Purifier:
-                composer require ezyang/htmlpurifier
-            Then wrap: {!! \HTMLPurifier::purify($article->content) !!}
+            SECURITY: Konten artikel disanitasi menggunakan HTMLPurifier
+            sebelum dirender. Tag dan atribut berbahaya (script, onerror,
+            javascript:, dll) dibuang secara otomatis.
         --}}
         <article class="article-content">
-            {!! $article->content !!}
+            {!! \App\Helpers\Purifier::clean($article->content) !!}
         </article>
 
         <div class="article-share">
