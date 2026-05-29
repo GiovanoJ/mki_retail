@@ -22,6 +22,7 @@
                     <li><a href="{{ route('home') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Home</a></li>
                     <li><a href="{{ route('products.index') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Produk</a></li>
                     <li><a href="{{ route('contact') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Contact</a></li>
+                    <li><a href="{{ route('articles.index') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">Article</a></li>
                 </ul>
             </div>
 

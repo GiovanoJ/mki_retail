@@ -1,12 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Pusat Grosir MKI — Material Bangunan Premium')
+@section('title', 'Pusat Grosir PVC WPC — Material Bangunan Termurah')
 
 @section('content')
 
 {{-- ═══════════════════════════════════════════════════════════
      SECTION 1: HERO
      ═══════════════════════════════════════════════════════════ --}}
+     
 <section class="home-hero">
     <img id="hero-bg-out"
          class="home-hero__bg-img hero-bg-active"
@@ -24,7 +25,6 @@
 
     <div class="home-hero__content">
         <div class="home-hero__left">
-            <p class="home-hero__eyebrow">Pusat Grosir PVC WPC</p>
 
             <h1 class="home-hero__title">
                 Grosir Terbesar<br>
@@ -138,8 +138,8 @@
                 </svg>
             </div>
             <div>
-                <p class="home-usp__title">Showroom Lengkap</p>
-                <p class="home-usp__desc">Lihat &amp; sentuh langsung semua koleksi material kami</p>
+                <p class="home-usp__title">Sedia Aplikator</p>
+                <p class="home-usp__desc">Sedia Aplikator di daerah Jabodetabek</p>
             </div>
         </div>
     </div>
@@ -416,7 +416,7 @@
             </div>
 
             <div class="home-showroom__ctas">
-                <a href="https://maps.google.com" target="_blank" rel="noopener" class="home-showroom__btn-map">
+                <a href="https://www.google.com/maps/place/PT.+MEGA+KOMPOSIT+INDONESIA/@-6.2195986,106.7354138,18.54z/data=!4m6!3m5!1s0x2e69e50d7f0a62c9:0x471141ad8c8c6eb4!8m2!3d-6.2200139!4d106.7365017!16s%2Fg%2F11f9gbpphs?entry=ttu&g_ep=EgoyMDI2MDUyNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener" class="home-showroom__btn-map">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
                     </svg>
@@ -605,53 +605,60 @@
         <div class="home-gallery__grid">
             <div class="home-gallery__item">
                 <div class="home-gallery__placeholder">
-                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" style="opacity:.35">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/>
-                    </svg>
-                    <span>Wall Panel — Gedung Perkantoran</span>
+                    <img src="{{ asset('img/indomaret_group.webp') }}"
+                        width="36"
+                        height="36"
+                        alt="image"
+                    >
                 </div>
                 <div class="home-gallery__item-overlay"></div>
-                <div class="home-gallery__item-caption"><p>Wall Panel — Gedung Perkantoran</p></div>
+                <div class="home-gallery__item-caption"><p>Facade - Indomaret Group</p></div>
             </div>
             <div class="home-gallery__item">
                 <div class="home-gallery__placeholder">
-                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" style="opacity:.35">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/>
-                    </svg>
-                    <span>Decking — Rooftop Residensial</span>
+                    <img src="{{ asset('img/DoubleTree.webp') }}"
+                        width="36"
+                        height="36"
+                        alt="image"
+                    >
                 </div>
                 <div class="home-gallery__item-overlay"></div>
-                <div class="home-gallery__item-caption"><p>Decking — Rooftop Residensial</p></div>
+                <div class="home-gallery__item-caption"><p>Decking — DoubleTree by Hilton</p></div>
             </div>
             <div class="home-gallery__item">
                 <div class="home-gallery__placeholder">
-                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" style="opacity:.35">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/>
-                    </svg>
-                    <span>Facade — Hotel Bintang Lima</span>
+                <div class="home-gallery__placeholder">
+                    <img src="{{ asset('img/BaliResort.webp') }}"
+                        width="36"
+                        height="36"
+                        alt="image"
+                    >
+                </div>
                 </div>
                 <div class="home-gallery__item-overlay"></div>
-                <div class="home-gallery__item-caption"><p>Facade — Hotel Bintang Lima</p></div>
+                <div class="home-gallery__item-caption"><p>Facade — Bali Resort</p></div>
             </div>
             <div class="home-gallery__item">
                 <div class="home-gallery__placeholder">
-                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" style="opacity:.35">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/>
-                    </svg>
-                    <span>Cladding — Mall Premium</span>
+                    <img src="{{ asset('img/Belova.webp') }}"
+                        width="36"
+                        height="36"
+                        alt="image"
+                    >
                 </div>
                 <div class="home-gallery__item-overlay"></div>
-                <div class="home-gallery__item-caption"><p>Cladding — Mall Premium</p></div>
+                <div class="home-gallery__item-caption"><p>Wall Panel WPC - Belova Classic BSD City</p></div>
             </div>
             <div class="home-gallery__item">
                 <div class="home-gallery__placeholder">
-                    <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24" style="opacity:.35">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/>
-                    </svg>
-                    <span>Decking — Area Pool</span>
+                    <img src="{{ asset('img/EonnaClubHouse.webp') }}"
+                        width="36"
+                        height="36"
+                        alt="image"
+                    >
                 </div>
                 <div class="home-gallery__item-overlay"></div>
-                <div class="home-gallery__item-caption"><p>Decking — Area Pool</p></div>
+                <div class="home-gallery__item-caption"><p>Facade - EonnaClubHouse</p></div>
             </div>
         </div>
     </div>

@@ -140,7 +140,7 @@
 .home-hero__title em { font-style: italic; color: var(--gold); }
 
 .home-hero__sub {
-    font-size: clamp(.86rem, 1.2vw, 1rem);
+    font-size: clamp(1.5rem, 1.5vw, 1.5rem);
     color: rgba(240,235,227,.65);
     font-weight: 300;
     line-height: 1.75;
