@@ -4,10 +4,6 @@
 
 @section('content')
 
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 1: HERO
-     ═══════════════════════════════════════════════════════════ --}}
-     
 <section class="home-hero">
     <img id="hero-bg-out"
          class="home-hero__bg-img hero-bg-active"
@@ -90,9 +86,6 @@
     </div>
 </section>
 
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 2: USP STRIP
-     ═══════════════════════════════════════════════════════════ --}}
 <section class="home-usp">
     <div class="home-usp__inner">
         <div class="home-usp__item">
@@ -145,9 +138,6 @@
     </div>
 </section>
 
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 3: PRODUK UNGGULAN
-     ═══════════════════════════════════════════════════════════ --}}
 <section class="home-products">
     <div class="home-products__inner">
         <div class="home-products__head reveal">
@@ -216,9 +206,6 @@
     </div>
 </section>
 
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 4: KONSULTASI
-     ═══════════════════════════════════════════════════════════ --}}
 <section class="home-konsultasi">
     <div class="home-konsultasi__inner">
 
@@ -276,61 +263,76 @@
         </div>
 
         <div class="home-konsultasi__form reveal reveal-delay-2">
-            <div class="home-konsultasi__form-head">
-                <h3 class="home-konsultasi__form-title">Formulir Konsultasi</h3>
-                <p class="home-konsultasi__form-sub">Isi formulir ini — tim kami akan menghubungi Anda dalam 1×24 jam kerja.</p>
-            </div>
+            <h3 class="home-konsultasi__form-title">Formulir Konsultasi</h3>
+            <p class="home-konsultasi__form-sub">Isi formulir ini — tim kami akan menghubungi Anda dalam 1×24 jam kerja.</p>
 
-            <form action="{{ route('contact.send') }}" method="POST" class="home-konsultasi__form-body">
+            @if(session('mail_success'))
+                <div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#059669;border-radius:4px;padding:10px 14px;font-size:.8rem;margin-bottom:16px;">
+                    ✓ Pesan Anda berhasil dikirim. Tim kami akan segera menghubungi Anda.
+                </div>
+            @endif
+
+            @if ($errors->has('message'))
+                <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#dc2626;border-radius:4px;padding:10px 14px;font-size:.8rem;margin-bottom:16px;">
+                    {{ $errors->first('message') }}
+                </div>
+            @endif
+
+            <form action="{{ route('contact.send') }}" method="POST" id="homeContactForm">
                 @csrf
+                <input type="hidden" name="source" value="home">
+
+                <div style="display:none !important;position:absolute;left:-9999px;" aria-hidden="true">
+                    <input type="text" name="website" value="" tabindex="-1" autocomplete="off">
+                </div>
+
+                <input type="hidden" name="form_loaded_at" id="homeFormLoadedAt" value="">
+
                 <div class="home-konsultasi__form-grid">
                     <div class="home-konsultasi__field">
-                        <label>Nama Lengkap</label>
-                        <input type="text" name="name" placeholder="Budi Santoso" required>
+                        <label>Nama Lengkap <span style="color:var(--gold)">*</span></label>
+                        <input type="text" name="name"
+                               value="{{ old('name') }}"
+                               placeholder="Budi Santoso"
+                               required>
                     </div>
                     <div class="home-konsultasi__field">
-                        <label>No. WhatsApp</label>
-                        <input type="text" name="phone" placeholder="0812-xxxx-xxxx">
+                        <label>No. Telepon</label>
+                        <input type="tel" name="phone"
+                               value="{{ old('phone') }}"
+                               placeholder="+62 812-0000-0000">
                     </div>
                 </div>
 
                 <div class="home-konsultasi__field">
-                    <label>Email</label>
-                    <input type="email" name="email" placeholder="budi@perusahaan.com" required>
+                    <label>Email <span style="color:var(--gold)">*</span></label>
+                    <input type="email" name="email"
+                           value="{{ old('email') }}"
+                           placeholder="budi@perusahaan.com"
+                           required>
                 </div>
 
                 <div class="home-konsultasi__field">
-                    <label>Jenis Proyek</label>
+                    <label>Keperluan</label>
                     <select name="subject">
-                        <option value="">Pilih jenis proyek...</option>
-                        <option>Residensial / Rumah Tinggal</option>
-                        <option>Gedung Komersial</option>
-                        <option>Hotel &amp; Hospitality</option>
-                        <option>Perkantoran</option>
-                        <option>Industrial</option>
+                        <option value="" disabled {{ old('subject') ? '' : 'selected' }}>Pilih keperluan...</option>
+                        <option value="Permintaan Penawaran"    {{ old('subject') === 'Permintaan Penawaran'   ? 'selected' : '' }}>Permintaan Penawaran</option>
+                        <option value="Informasi Produk"        {{ old('subject') === 'Informasi Produk'       ? 'selected' : '' }}>Informasi Produk</option>
+                        <option value="Kerjasama / Distributor" {{ old('subject') === 'Kerjasama / Distributor'? 'selected' : '' }}>Kerjasama / Distributor</option>
+                        <option value="Pertanyaan Umum"         {{ old('subject') === 'Pertanyaan Umum'        ? 'selected' : '' }}>Pertanyaan Umum</option>
+                        <option value="Lainnya"                 {{ old('subject') === 'Lainnya'                ? 'selected' : '' }}>Lainnya</option>
                     </select>
                 </div>
 
                 <div class="home-konsultasi__field">
-                    <label>Produk yang Diminati</label>
-                    <select name="product_interest">
-                        <option value="">Pilih produk...</option>
-                        <option>Wall Panel</option>
-                        <option>Decking</option>
-                        <option>Facade / Cladding</option>
-                        <option>Kombinasi Produk</option>
-                        <option>Belum Tahu / Minta Rekomendasi</option>
-                    </select>
+                    <label>Pesan <span style="color:var(--gold)">*</span></label>
+                    <textarea name="message"
+                              rows="3"
+                              placeholder="Tuliskan pesan atau pertanyaan Anda di sini..."
+                              required>{{ old('message') }}</textarea>
                 </div>
 
-                <div class="home-konsultasi__field">
-                    <label>Deskripsi Singkat Kebutuhan</label>
-                    <textarea name="message" rows="3"
-                            placeholder="Contoh: Butuh wall panel untuk eksterior gedung 5 lantai di Jakarta, luas ±800 m²..."
-                            required></textarea>
-                </div>
-
-                <button type="submit" class="home-konsultasi__submit">
+                <button type="submit" class="home-konsultasi__submit" id="homeSubmitBtn">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
                     </svg>
@@ -349,12 +351,8 @@
     </div>
 </section>
 
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 5: SHOWROOM
-     ═══════════════════════════════════════════════════════════ --}}
 <section class="home-showroom" id="showroom">
     <div class="home-showroom__inner">
-
 
         <div class="home-showroom__info reveal">
             <p class="home-section-label">Temukan Kami</p>
@@ -437,156 +435,29 @@
             <div class="home-showroom__gallery-grid">
                 <div class="home-showroom__gallery-item home-showroom__gallery-item--large">
                     <div class="home-showroom__gallery-placeholder">
-                        <img
-                            src="{{ asset('img/showroom1.webp') }}"
-                            alt="Showroom"
-                            width="36"
-                            height="36"
-                        >
+                        <img src="{{ asset('img/showroom1.webp') }}" alt="Showroom" width="36" height="36">
                     </div>
                     <div class="home-showroom__gallery-hover"></div>
                 </div>
                 <div class="home-showroom__gallery-item">
                     <div class="home-showroom__gallery-placeholder">
-                        <img
-                            src="{{ asset('img/showroom2.webp') }}"
-                            alt="Showroom"
-                            width="28"
-                            height="30"
-                        >
+                        <img src="{{ asset('img/showroom2.webp') }}" alt="Showroom" width="28" height="30">
                         <span>Display Wall Panel</span>
                     </div>
                     <div class="home-showroom__gallery-hover"></div>
                 </div>
                 <div class="home-showroom__gallery-item">
                     <div class="home-showroom__gallery-placeholder">
-                        <img
-                            src="{{ asset('img/showroom3.webp') }}"
-                            alt="Showroom"
-                            width="28"
-                            height="28"
-                        >
+                        <img src="{{ asset('img/showroom3.webp') }}" alt="Showroom" width="28" height="28">
                     </div>
                     <div class="home-showroom__gallery-hover"></div>
                 </div>
             </div>
-
-            {{-- Peta / Embed Google Maps --}}
-            {{-- <div class="home-showroom__map">
-                {{-- Ganti dengan embed Google Maps iframe nyata:
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=..."
-                    width="100%" height="130" style="border:0" allowfullscreen loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"></iframe>
-                --}}
-                {{-- <div class="home-showroom__map-placeholder">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="color:var(--gold)">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-                    </svg>
-                    <span>Peta menuju showroom MKI — Pulogadung, Jakarta Timur</span>
-                </div>
-            </div> --}}
         </div>
 
     </div>
 </section>
 
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 6: KEPERCAYAAN — STATISTIK + TESTIMONI
-     ═══════════════════════════════════════════════════════════ --}}
-{{-- <section class="home-trust">
-    <div class="home-trust__inner"> --}}
-        {{-- <div>
-            <p class="home-section-label reveal">Angka Bicara</p>
-            <div class="home-trust__stats">
-                <div class="home-trust__stat reveal reveal-delay-1">
-                    <div class="home-trust__stat-num">500<span>+</span></div>
-                    <p class="home-trust__stat-label">Proyek selesai</p>
-                </div>
-                <div class="home-trust__stat reveal reveal-delay-2">
-                    <div class="home-trust__stat-num">10<span>+</span></div>
-                    <p class="home-trust__stat-label">Tahun pengalaman</p>
-                </div>
-                <div class="home-trust__stat reveal reveal-delay-3">
-                    <div class="home-trust__stat-num">34</div>
-                    <p class="home-trust__stat-label">Kota terjangkau</p>
-                </div>
-                <div class="home-trust__stat reveal reveal-delay-4">
-                    <div class="home-trust__stat-num">98<span>%</span></div>
-                    <p class="home-trust__stat-label">Klien puas</p>
-                </div>
-            </div>
-        </div> --}}
-
-        {{-- <div>
-            <p class="home-section-label home-trust__testi-label reveal">Kata Mereka</p>
-
-            <div class="home-testi reveal reveal-delay-1">
-                <div class="home-testi__stars">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                </div>
-                <p class="home-testi__quote">
-                    "Kualitas wall panel MKI jauh melampaui ekspektasi. Pemasangan mudah, finishing rapi, dan tahan terhadap cuaca ekstrem di lokasi proyek kami."
-                </p>
-                <div class="home-testi__author">
-                    <div class="home-testi__avatar">BS</div>
-                    <div>
-                        <p class="home-testi__name">Budi Santoso</p>
-                        <p class="home-testi__company">Kontraktor — PT. Bangun Nusantara</p>
-                    </div>
-                </div>
-            </div> --}}
-
-            {{-- <div class="home-testi reveal reveal-delay-2">
-                <div class="home-testi__stars">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                </div>
-                <p class="home-testi__quote">
-                    "Harga grosir yang kompetitif dan pengiriman selalu tepat waktu. Sudah 3 tahun kami bermitra dengan MKI untuk proyek-proyek properti komersial kami."
-                </p>
-                <div class="home-testi__author">
-                    <div class="home-testi__avatar">RA</div>
-                    <div>
-                        <p class="home-testi__name">Rina Andika</p>
-                        <p class="home-testi__company">Arsitek — Studio Rupa Desain</p>
-                    </div>
-                </div>
-            </div> --}}
-
-            {{-- <div class="home-testi reveal reveal-delay-3">
-                <div class="home-testi__stars">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--gold)" opacity=".4"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                </div>
-                <p class="home-testi__quote">
-                    "Tim konsultasi MKI sangat membantu. Mereka merekomendasikan material yang pas untuk facade hotel kami — hasilnya elegan dan sesuai budget."
-                </p>
-                <div class="home-testi__author">
-                    <div class="home-testi__avatar">DH</div>
-                    <div>
-                        <p class="home-testi__name">Dharma Hartono</p>
-                        <p class="home-testi__company">Project Manager — Harmoni Hotel Group</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section> --}}
-
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 7: GALERI PROYEK
-     ═══════════════════════════════════════════════════════════ --}}
 <section class="home-gallery">
     <div class="home-gallery__inner">
         <div class="home-gallery__head reveal">
@@ -605,57 +476,35 @@
         <div class="home-gallery__grid">
             <div class="home-gallery__item">
                 <div class="home-gallery__placeholder">
-                    <img src="{{ asset('img/indomaret_group.webp') }}"
-                        width="36"
-                        height="36"
-                        alt="image"
-                    >
+                    <img src="{{ asset('img/indomaret_group.webp') }}" width="36" height="36" alt="image">
                 </div>
                 <div class="home-gallery__item-overlay"></div>
                 <div class="home-gallery__item-caption"><p>Facade - Indomaret Group</p></div>
             </div>
             <div class="home-gallery__item">
                 <div class="home-gallery__placeholder">
-                    <img src="{{ asset('img/DoubleTree.webp') }}"
-                        width="36"
-                        height="36"
-                        alt="image"
-                    >
+                    <img src="{{ asset('img/DoubleTree.webp') }}" width="36" height="36" alt="image">
                 </div>
                 <div class="home-gallery__item-overlay"></div>
                 <div class="home-gallery__item-caption"><p>Decking — DoubleTree by Hilton</p></div>
             </div>
             <div class="home-gallery__item">
                 <div class="home-gallery__placeholder">
-                <div class="home-gallery__placeholder">
-                    <img src="{{ asset('img/BaliResort.webp') }}"
-                        width="36"
-                        height="36"
-                        alt="image"
-                    >
-                </div>
+                    <img src="{{ asset('img/BaliResort.webp') }}" width="36" height="36" alt="image">
                 </div>
                 <div class="home-gallery__item-overlay"></div>
                 <div class="home-gallery__item-caption"><p>Facade — Bali Resort</p></div>
             </div>
             <div class="home-gallery__item">
                 <div class="home-gallery__placeholder">
-                    <img src="{{ asset('img/Belova.webp') }}"
-                        width="36"
-                        height="36"
-                        alt="image"
-                    >
+                    <img src="{{ asset('img/Belova.webp') }}" width="36" height="36" alt="image">
                 </div>
                 <div class="home-gallery__item-overlay"></div>
                 <div class="home-gallery__item-caption"><p>Wall Panel WPC - Belova Classic BSD City</p></div>
             </div>
             <div class="home-gallery__item">
                 <div class="home-gallery__placeholder">
-                    <img src="{{ asset('img/EonnaClubHouse.webp') }}"
-                        width="36"
-                        height="36"
-                        alt="image"
-                    >
+                    <img src="{{ asset('img/EonnaClubHouse.webp') }}" width="36" height="36" alt="image">
                 </div>
                 <div class="home-gallery__item-overlay"></div>
                 <div class="home-gallery__item-caption"><p>Facade - EonnaClubHouse</p></div>
@@ -664,9 +513,6 @@
     </div>
 </section>
 
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 8: ARTIKEL TERBARU
-     ═══════════════════════════════════════════════════════════ --}}
 @if(isset($latestArticles) && $latestArticles->isNotEmpty())
 <section class="home-articles">
     <div class="home-articles__inner">
@@ -716,9 +562,6 @@
 </section>
 @endif
 
-{{-- ═══════════════════════════════════════════════════════════
-     SECTION 9: CTA PENUTUP
-     ═══════════════════════════════════════════════════════════ --}}
 <section class="home-cta">
     <div class="home-cta__inner">
         <div class="reveal">
@@ -754,31 +597,34 @@
 
 <script>
 (function () {
-    /* ─── Hero Image Crossfade ─────────────────────────────────
-       Mulai dengan herozoomedout.webp (tampilan lebar),
-       setiap 5 detik berganti ke herozoomedin.webp dan sebaliknya.
-       Transition CSS opacity 1.8s memberikan efek crossfade halus.
-    ──────────────────────────────────────────────────────────── */
-    var imgOut = document.getElementById('hero-bg-out'); // zoomed out (aktif duluan)
-    var imgIn  = document.getElementById('hero-bg-in');  // zoomed in  (standby)
+    var el = document.getElementById('homeFormLoadedAt');
+    if (el) el.value = Math.floor(Date.now() / 1000);
 
+    var form = document.getElementById('homeContactForm');
+    if (form) {
+        form.addEventListener('submit', function () {
+            var btn = document.getElementById('homeSubmitBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg> Mengirim...';
+            }
+        });
+    }
+
+    var imgOut = document.getElementById('hero-bg-out');
+    var imgIn  = document.getElementById('hero-bg-in');
     if (imgOut && imgIn) {
         var showingOut = true;
-
-        // Preload gambar kedua supaya transisi mulus
         var preload = new Image();
         preload.src = imgIn.src;
-
         setInterval(function () {
             showingOut = !showingOut;
             if (showingOut) {
-                // Kembali ke zoomed out
                 imgOut.classList.add('hero-bg-active');
                 imgOut.classList.remove('hero-bg-inactive');
                 imgIn.classList.add('hero-bg-inactive');
                 imgIn.classList.remove('hero-bg-active');
             } else {
-                // Pindah ke zoomed in
                 imgIn.classList.add('hero-bg-active');
                 imgIn.classList.remove('hero-bg-inactive');
                 imgOut.classList.add('hero-bg-inactive');
@@ -787,7 +633,6 @@
         }, 7000);
     }
 
-    /* ─── Scroll Reveal ────────────────────────────────────── */
     var els = document.querySelectorAll('.reveal');
     if (!els.length) return;
     var io = new IntersectionObserver(function (entries) {
@@ -800,7 +645,6 @@
     }, { threshold: 0.1 });
     els.forEach(function (el) { io.observe(el); });
 
-    /* ─── Smooth Scroll ke Showroom ────────────────────────── */
     document.querySelectorAll('a[href="#showroom"]').forEach(function (a) {
         a.addEventListener('click', function (e) {
             e.preventDefault();

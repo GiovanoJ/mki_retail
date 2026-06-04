@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
+use App\Http\Controllers\Admin\ContactMessageController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -82,5 +83,12 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
 
         Route::post('/upload-image', [AdminArticleController::class, 'uploadImage'])->name('uploadImage');
         Route::post('/remove-image', [AdminArticleController::class, 'removeImage'])->name('removeImage');
+    });
+
+        Route::prefix('contact')->name('contact.')->group(function () {
+        Route::get('/',                           [ContactMessageController::class, 'index'])->name('index');
+        Route::get('/{message}',                  [ContactMessageController::class, 'show'])->name('show');
+        Route::delete('/{message}',               [ContactMessageController::class, 'destroy'])->name('destroy');
+        Route::post('/mark-all-read',             [ContactMessageController::class, 'markAllRead'])->name('markAllRead');
     });
 });

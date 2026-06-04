@@ -112,8 +112,22 @@
                 </div>
             @endif
 
+            @if ($errors->has('message'))
+                <div class="form-alert error">
+                    {{ $errors->first('message') }}
+                </div>
+            @endif
+
             <form action="{{ route('contact.send') }}" method="POST" id="contactForm">
                 @csrf
+
+                {{-- ── HONEYPOT: disembunyikan via CSS, bot mengisi = spam ── --}}
+                <div style="display:none !important; position:absolute; left:-9999px;" aria-hidden="true">
+                    <input type="text" name="website" value="" tabindex="-1" autocomplete="off">
+                </div>
+
+                {{-- ── TIME CHECK: timestamp saat halaman dibuka ────────────── --}}
+                <input type="hidden" name="form_loaded_at" id="formLoadedAt" value="">
 
                 <div class="form-row">
                     <div class="form-group">
@@ -179,6 +193,8 @@
 </div>
 
 <script>
+document.getElementById('formLoadedAt').value = Math.floor(Date.now() / 1000);
+
 document.getElementById('contactForm').addEventListener('submit', function () {
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;

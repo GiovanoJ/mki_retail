@@ -43,6 +43,16 @@
                     icon="document">
                     Artikel
                 </x-admin.nav-link>
+                <x-admin.nav-link
+                    :href="route('admin.contact.index')"
+                    :active="request()->routeIs('admin.contact.*')"
+                    icon="mail">
+                    Pesan Masuk
+                    @php $unread = \App\Models\ContactMessage::unread()->count(); @endphp
+                    @if($unread > 0)
+                        <span class="ml-auto bg-violet-600 text-white text-xs px-1.5 py-0.5 rounded-full">{{ $unread }}<span>
+                    @endif
+                </x-admin.nav-link>
             </nav>
 
             {{-- User info + logout --}}
