@@ -69,7 +69,7 @@ class ProductVariantController extends Controller
 
     public function update(Request $request, Product $product, ProductVariant $variant)
     {
-        abort_if($variant->product_id !== $product->id, 404);
+        abort_if($variant->product_id != $product->id, 404);
 
         $validated = $request->validate([
             'sku'                => ['required', 'string', 'max:100', "unique:product_variants,sku,{$variant->id}"],
@@ -113,7 +113,7 @@ class ProductVariantController extends Controller
 
     public function destroy(Product $product, ProductVariant $variant)
     {
-        abort_if($variant->product_id !== $product->id, 404);
+        abort_if($variant->product_id != $product->id, 404);
 
         if ($variant->image_path) {
             Storage::disk('public')->delete($variant->image_path);

@@ -146,25 +146,33 @@
                 </span>
             </div>
 
-            <div id="attrSection">
-                @if($firstVariant && !empty($firstVariant->attributes))
-                    <table class="attr-table">
-                        @foreach($firstVariant->attributes as $attr)
-                            <tr>
-                                <td>{{ $attr['key'] ?? '' }}</td>
-                                <td>
-                                    @if(!empty($attr['hex']))
-                                        <span style="display:inline-flex;align-items:center;gap:6px">
-                                            <span style="width:12px;height:12px;border-radius:50%;background:{{ $attr['hex'] }};border:1px solid rgba(0,0,0,.1);display:inline-block;flex-shrink:0"></span>
-                                            {{ $attr['value'] ?? '' }}
-                                        </span>
-                                    @else
-                                        {{ $attr['value'] ?? '' }}
-                                    @endif
-                                </td>
-                            </tr>
+            {{-- Spesifikasi Teknis: tampil langsung tanpa dropdown --}}
+            @php $variantSpecs = $firstVariant?->specifications ?? []; @endphp
+            <div id="specsSection">
+                @if(count($variantSpecs) > 0)
+                    <div class="specs-direct" id="varSpecDirect">
+                        <p class="specs-direct-title">Spesifikasi Teknis</p>
+                        @foreach($variantSpecs as $s)
+                            <div class="specs-row">
+                                <span class="specs-key">{{ $s['key'] ?? '' }}</span>
+                                <span class="specs-val">{{ $s['value'] ?? '' }}</span>
+                            </div>
                         @endforeach
-                    </table>
+                    </div>
+                @else
+                    <div class="specs-direct hidden" id="varSpecDirect"></div>
+                @endif
+
+                @if(!empty($product->specifications))
+                    <div class="specs-direct" style="margin-top:8px">
+                        <p class="specs-direct-title">Spesifikasi Umum</p>
+                        @foreach($product->specifications as $s)
+                            <div class="specs-row">
+                                <span class="specs-key">{{ $s['key'] ?? '' }}</span>
+                                <span class="specs-val">{{ $s['value'] ?? '' }}</span>
+                            </div>
+                        @endforeach
+                    </div>
                 @endif
             </div>
 
@@ -184,39 +192,42 @@
                 </a>
             </div>
 
-            {{-- Specs accordion --}}
-            @php $variantSpecs = $firstVariant?->specifications ?? []; @endphp
-            <div id="specsWrap">
-                <button class="specs-toggle {{ count($variantSpecs) ? '' : 'hidden' }}" id="varSpecToggle" onclick="toggleSpecs(this)">
-                    Spesifikasi Teknis
-                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </button>
-                <div class="specs-body" id="varSpecBody">
-                    @foreach($variantSpecs as $s)
-                        <div class="specs-row">
-                            <span class="specs-key">{{ $s['key'] ?? '' }}</span>
-                            <span class="specs-val">{{ $s['value'] ?? '' }}</span>
-                        </div>
-                    @endforeach
-                </div>
-
-                @if(!empty($product->specifications))
-                    <button class="specs-toggle" onclick="toggleSpecs(this)">
-                        Spesifikasi Umum
+            {{-- Atribut: pindah ke bawah, dijadikan accordion --}}
+            <div id="attrWrap">
+                @if($firstVariant && !empty($firstVariant->attributes))
+                    <button class="specs-toggle open" id="attrToggle" onclick="toggleSpecs(this)">
+                        Detail Atribut
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
-                    <div class="specs-body">
-                        @foreach($product->specifications as $s)
-                            <div class="specs-row">
-                                <span class="specs-key">{{ $s['key'] ?? '' }}</span>
-                                <span class="specs-val">{{ $s['value'] ?? '' }}</span>
-                            </div>
-                        @endforeach
+                    <div class="specs-body open" id="attrSection">
+                        <table class="attr-table">
+                            @foreach($firstVariant->attributes as $attr)
+                                <tr>
+                                    <td>{{ $attr['key'] ?? '' }}</td>
+                                    <td>
+                                        @if(!empty($attr['hex']))
+                                            <span style="display:inline-flex;align-items:center;gap:6px">
+                                                <span style="width:12px;height:12px;border-radius:50%;background:{{ $attr['hex'] }};border:1px solid rgba(0,0,0,.1);display:inline-block;flex-shrink:0"></span>
+                                                {{ $attr['value'] ?? '' }}
+                                            </span>
+                                        @else
+                                            {{ $attr['value'] ?? '' }}
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </table>
                     </div>
+                @else
+                    <button class="specs-toggle hidden" id="attrToggle" onclick="toggleSpecs(this)">
+                        Detail Atribut
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </button>
+                    <div class="specs-body" id="attrSection"></div>
                 @endif
             </div>
 
@@ -231,6 +242,7 @@
     @endif
 
 </div>
+
 
 <script>
 
@@ -276,7 +288,23 @@ function switchVariant(variantId) {
         ? `Stok tersedia (${v.stock} unit)`
         : 'Stok habis';
 
-    const attrEl = document.getElementById('attrSection');
+    // Update spesifikasi teknis (tampil langsung, tanpa dropdown)
+    const varSpecDirect = document.getElementById('varSpecDirect');
+    if (v.specifications && v.specifications.length > 0) {
+        let html = '<p class="specs-direct-title">Spesifikasi Teknis</p>';
+        v.specifications.forEach(s => {
+            html += `<div class="specs-row"><span class="specs-key">${s.key||''}</span><span class="specs-val">${s.value||''}</span></div>`;
+        });
+        varSpecDirect.innerHTML = html;
+        varSpecDirect.classList.remove('hidden');
+    } else {
+        varSpecDirect.innerHTML = '';
+        varSpecDirect.classList.add('hidden');
+    }
+
+    // Update atribut (accordion) — fix bug hilang saat ganti variant
+    const attrToggle  = document.getElementById('attrToggle');
+    const attrSection = document.getElementById('attrSection');
     if (v.attributes && v.attributes.length > 0) {
         let html = '<table class="attr-table">';
         v.attributes.forEach(a => {
@@ -286,25 +314,16 @@ function switchVariant(variantId) {
             html += `<tr><td>${a.key || ''}</td><td>${dot}${a.value || ''}</td></tr>`;
         });
         html += '</table>';
-        attrEl.innerHTML = html;
+        attrSection.innerHTML = html;
+        attrToggle.classList.remove('hidden');
+        // Pastikan accordion tetap terbuka
+        attrToggle.classList.add('open');
+        attrSection.classList.add('open');
     } else {
-        attrEl.innerHTML = '';
-    }
-
-    const varSpecToggle = document.getElementById('varSpecToggle');
-    const varSpecBody   = document.getElementById('varSpecBody');
-    if (v.specifications && v.specifications.length > 0) {
-        let html = '';
-        v.specifications.forEach(s => {
-            html += `<div class="specs-row"><span class="specs-key">${s.key||''}</span><span class="specs-val">${s.value||''}</span></div>`;
-        });
-        varSpecBody.innerHTML = html;
-        varSpecToggle.classList.remove('hidden');
-    } else {
-        varSpecBody.innerHTML = '';
-        varSpecToggle.classList.add('hidden');
-        varSpecToggle.classList.remove('open');
-        varSpecBody.classList.remove('open');
+        attrSection.innerHTML = '';
+        attrToggle.classList.add('hidden');
+        attrToggle.classList.remove('open');
+        attrSection.classList.remove('open');
     }
 
     const waBtn = document.getElementById('waBtn');

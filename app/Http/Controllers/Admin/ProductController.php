@@ -52,9 +52,6 @@ class ProductController extends Controller
             : [];
 
         $allCategories = array_values(array_unique(array_merge($categories, $custom)));
-
-        // Generate a stable base slug; append a short random suffix only to
-        // guarantee uniqueness at creation time. It will NOT change on updates.
         $baseSlug = Str::slug($request->input('name'));
         $slug     = $baseSlug;
         $i        = 1;
@@ -119,8 +116,6 @@ class ProductController extends Controller
             fn($r) => $r['key'] !== '' && $r['value'] !== ''
         ));
 
-        // STABILITY FIX: Keep the existing slug; only update slug if the name
-        // changed AND the derived slug would actually be different.
         $slug = $product->slug;
         if ($request->input('name') !== $product->name) {
             $baseSlug  = Str::slug($request->input('name'));

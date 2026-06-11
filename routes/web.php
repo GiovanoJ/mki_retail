@@ -43,6 +43,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function () {
+    Route::get('/admin/products/{product}/variants/{variant}/test', function($product, $variant) {
+        return "product: $product, variant: $variant";
+    });
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -54,14 +57,14 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
         Route::put('/{product}',      [AdminProductController::class, 'update'])->name('update');
         Route::delete('/{product}',   [AdminProductController::class, 'destroy'])->name('destroy');
 
-        Route::prefix('/{product}/variants')->name('variants.')->group(function () {
+        Route::prefix('{product}/variants')->name('variants.')->group(function () {
             Route::get('/',               [AdminVariantController::class, 'index'])->name('index');
             Route::get('/create',         [AdminVariantController::class, 'create'])->name('create');
             Route::post('/',              [AdminVariantController::class, 'store'])->name('store');
             Route::get('/{variant}/edit', [AdminVariantController::class, 'edit'])->name('edit');
             Route::put('/{variant}',      [AdminVariantController::class, 'update'])->name('update');
             Route::delete('/{variant}',   [AdminVariantController::class, 'destroy'])->name('destroy');
-        });
+        })->scopeBindings();
     });
 
     Route::prefix('promos')->name('promos.')->group(function () {

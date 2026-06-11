@@ -7,7 +7,6 @@
 
 <div class="max-w-xl">
 
-    {{-- Step indicator --}}
     <div class="flex items-center gap-3 mb-6">
         <div class="flex items-center gap-2">
             <div class="w-6 h-6 rounded-full bg-violet-600 flex items-center justify-center text-xs font-bold text-white shrink-0">1</div>
