@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -24,7 +25,7 @@ class ProductController extends Controller
 
     public function create()
     {
-        $categories = Product::CATEGORIES;
+        $categories = Product::categories();
         return view('admin.products.create', compact('categories'));
     }
 
@@ -39,9 +40,11 @@ class ProductController extends Controller
             'is_active'     => ['boolean'],
         ]);
 
+        $knownSlugs = array_keys(Product::categories());
+
         $categories = array_values(array_filter(
             $request->input('category', []),
-            fn($s) => array_key_exists($s, Product::CATEGORIES)
+            fn($s) => in_array($s, $knownSlugs, true)
         ));
 
         $custom = $request->filled('custom_categories')
@@ -76,7 +79,7 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        $categories = Product::CATEGORIES;
+        $categories = Product::categories();
         return view('admin.products.edit', compact('product', 'categories'));
     }
 
@@ -94,9 +97,11 @@ class ProductController extends Controller
             'is_active'     => ['boolean'],
         ]);
 
+        $knownSlugs = array_keys(Product::categories());
+
         $categories = array_values(array_filter(
             $request->input('category', []),
-            fn($s) => array_key_exists($s, Product::CATEGORIES)
+            fn($s) => in_array($s, $knownSlugs, true)
         ));
 
         $custom = $request->filled('custom_categories')

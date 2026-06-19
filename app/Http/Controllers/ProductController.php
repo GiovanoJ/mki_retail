@@ -24,7 +24,7 @@ class ProductController extends Controller
         }
 
         $products = $query->latest()->paginate(24)->withQueryString();
-        $tabs     = array_merge(['all' => 'Semua'], Product::CATEGORIES);
+        $tabs     = array_merge(['all' => 'Semua'], Product::tabCategories());
         $promos   = Promo::active()->get();
 
         return view('products.index', compact('products', 'tabs', 'activeTab', 'promos'));

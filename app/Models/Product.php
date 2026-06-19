@@ -10,16 +10,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    const CATEGORIES = [
-        'wall_panel' => 'Wall Panel',
-        'decking'    => 'Decking',
-        'facade'     => 'Facade',
-        'ceiling'    => 'Ceiling',
-        'flooring'   => 'Flooring',
-        'door'       => 'Door',
-        'rotan'      => 'Rotan',
-        'kabel'      => 'Kabel',
-    ];
+    const CATEGORIES = [];
 
     protected $fillable = [
         'name', 'slug', 'description', 'price',
@@ -51,7 +42,7 @@ class Product extends Model
 
     public function scopeInCategory($query, string $slug)
     {
-        if (!array_key_exists($slug, self::CATEGORIES)) {
+        if (! ProductCategory::where('slug', $slug)->exists()) {
             return $query->whereRaw('1=0');
         }
         return $query->whereJsonContains('category', $slug);
@@ -67,11 +58,23 @@ class Product extends Model
         return $this->variants()->where('is_active', true)->sum('stock');
     }
 
+    public static function categories(): array
+    {
+        return ProductCategory::allAsOptions();
+    }
+
+    public static function tabCategories(): array
+    {
+        return ProductCategory::tabOptions();
+    }
+
     public function categoryLabels(): array
     {
+        $known = self::categories();
+
         return array_values(array_filter(
             array_map(fn($slug) =>
-                self::CATEGORIES[$slug] ?? ucwords(str_replace(['_', '-'], ' ', $slug)),
+                $known[$slug] ?? ucwords(str_replace(['_', '-'], ' ', $slug)),
                 $this->category ?? []
             ),
             fn($l) => $l !== ''
@@ -80,19 +83,24 @@ class Product extends Model
 
     public function standardCategorySlugs(): array
     {
+        $known = self::categories();
+
         return array_values(array_filter(
             $this->category ?? [],
-            fn($slug) => array_key_exists($slug, self::CATEGORIES)
+            fn($slug) => array_key_exists($slug, $known)
         ));
     }
 
     public function customCategoryLabels(): array
     {
+        $known = self::categories();
+
         return array_values(array_filter(
             $this->category ?? [],
-            fn($slug) => !array_key_exists($slug, self::CATEGORIES)
+            fn($slug) => ! array_key_exists($slug, $known)
         ));
     }
+
     public function firstImage(): ?string
     {
         return $this->variants->where('is_active', true)->whereNotNull('image_path')->first()?->image_path;

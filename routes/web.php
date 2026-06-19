@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProductVariantController as AdminVariantController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\Admin\ProductCategoryController as AdminProductCategoryController;
 use App\Http\Controllers\Admin\PromoController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
@@ -65,6 +66,15 @@ Route::prefix('admin')->name('admin.')->middleware('admin.auth')->group(function
             Route::put('/{variant}',      [AdminVariantController::class, 'update'])->name('update');
             Route::delete('/{variant}',   [AdminVariantController::class, 'destroy'])->name('destroy');
         })->scopeBindings();
+    });
+
+    Route::prefix('product-categories')->name('product-categories.')->group(function () {
+        Route::get('/',                    [AdminProductCategoryController::class, 'index'])->name('index');
+        Route::get('/create',              [AdminProductCategoryController::class, 'create'])->name('create');
+        Route::post('/',                   [AdminProductCategoryController::class, 'store'])->name('store');
+        Route::get('/{productCategory}/edit', [AdminProductCategoryController::class, 'edit'])->name('edit');
+        Route::put('/{productCategory}',   [AdminProductCategoryController::class, 'update'])->name('update');
+        Route::delete('/{productCategory}',[AdminProductCategoryController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('promos')->name('promos.')->group(function () {

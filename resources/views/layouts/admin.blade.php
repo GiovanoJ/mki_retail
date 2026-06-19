@@ -34,6 +34,9 @@
                 <x-admin.nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.*')" icon="package">
                     Produk
                 </x-admin.nav-link>
+                <x-admin.nav-link :href="route('admin.product-categories.index')" :active="request()->routeIs('admin.product-categories.*')" icon="tag">
+                    Kategori Produk
+                </x-admin.nav-link>
                 <x-admin.nav-link :href="route('admin.promos.index')" :active="request()->routeIs('admin.promos.*')" icon="image">
                     Promo
                 </x-admin.nav-link>
@@ -55,7 +58,6 @@
                 </x-admin.nav-link>
             </nav>
 
-            {{-- User info + logout --}}
             <div class="p-3 border-t border-gray-800">
                 @php $adminUser = Auth::guard('admin')->user(); @endphp
                 <div class="flex items-center gap-2.5 px-2 py-2 mb-1">
@@ -80,10 +82,8 @@
             </div>
         </aside>
 
-        {{-- Main content --}}
         <div class="flex-1 flex flex-col min-w-0">
 
-            {{-- Top bar --}}
             <header class="h-16 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-6 shrink-0">
                 <div>
                     <h1 class="text-sm font-semibold text-white">@yield('title', 'Dashboard')</h1>

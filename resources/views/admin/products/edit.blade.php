@@ -37,10 +37,16 @@
 
             {{-- Kategori --}}
             <div>
-                <label class="block text-xs font-medium text-gray-400 mb-2">
-                    Kategori <span class="text-red-400">*</span>
-                    <span class="text-gray-600 font-normal ml-1">— bisa pilih lebih dari satu</span>
-                </label>
+                <div class="flex items-center justify-between mb-2">
+                    <label class="block text-xs font-medium text-gray-400">
+                        Kategori
+                        <span class="text-gray-600 font-normal ml-1">— bisa pilih lebih dari satu</span>
+                    </label>
+                    <a href="{{ route('admin.product-categories.index') }}"
+                       class="text-xs text-violet-400 hover:text-violet-300 transition-colors">
+                        Kelola Kategori
+                    </a>
+                </div>
 
                 @php
                     $selectedStandard = old('category', $product->standardCategorySlugs());
@@ -53,25 +59,31 @@
                 @endphp
 
                 {{-- Checkbox kategori baku --}}
-                <div class="grid grid-cols-2 gap-y-2 gap-x-3 mb-3">
-                    @foreach($categories as $slug => $label)
-                        <label class="flex items-center gap-2.5 cursor-pointer group">
-                            <div class="relative w-4 h-4 shrink-0">
-                                <input type="checkbox" name="category[]" value="{{ $slug }}"
-                                       {{ in_array($slug, $selectedStandard) ? 'checked' : '' }}
-                                       class="peer absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
-                                <div class="w-4 h-4 rounded border border-gray-700 bg-gray-800
-                                            peer-checked:bg-violet-600 peer-checked:border-violet-600
-                                            transition-colors flex items-center justify-center">
-                                    <svg class="w-2.5 h-2.5 text-white scale-0 peer-checked:scale-100 transition-transform" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 12 12">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 6l3 3 6-6"/>
-                                    </svg>
+                @if(count($categories) > 0)
+                    <div class="grid grid-cols-2 gap-y-2 gap-x-3 mb-3">
+                        @foreach($categories as $slug => $label)
+                            <label class="flex items-center gap-2.5 cursor-pointer group">
+                                <div class="relative w-4 h-4 shrink-0">
+                                    <input type="checkbox" name="category[]" value="{{ $slug }}"
+                                           {{ in_array($slug, $selectedStandard) ? 'checked' : '' }}
+                                           class="peer absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
+                                    <div class="w-4 h-4 rounded border border-gray-700 bg-gray-800
+                                                peer-checked:bg-violet-600 peer-checked:border-violet-600
+                                                transition-colors flex items-center justify-center">
+                                        <svg class="w-2.5 h-2.5 text-white scale-0 peer-checked:scale-100 transition-transform" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 12 12">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 6l3 3 6-6"/>
+                                        </svg>
+                                    </div>
                                 </div>
-                            </div>
-                            <span class="text-sm text-gray-300 group-hover:text-white transition-colors select-none">{{ $label }}</span>
-                        </label>
-                    @endforeach
-                </div>
+                                <span class="text-sm text-gray-300 group-hover:text-white transition-colors select-none">{{ $label }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-xs text-gray-600 mb-3">
+                        Belum ada kategori baku. <a href="{{ route('admin.product-categories.create') }}" class="text-violet-400 hover:text-violet-300">Tambah kategori</a> terlebih dahulu.
+                    </p>
+                @endif
 
                 {{-- Kategori custom --}}
                 <div class="border-t border-gray-800 pt-3">
@@ -126,7 +138,6 @@
             </div>
         </div>
 
-        {{-- Spesifikasi Umum --}}
         <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 mb-4">
             <div class="flex items-center justify-between mb-4">
                 <div>
@@ -172,7 +183,6 @@
             </div>
         </div>
 
-        {{-- Actions --}}
         <div class="flex items-center justify-between">
             <button type="button" id="deleteProductBtn"
                     class="flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 border border-red-500/30 hover:border-red-500/60 bg-red-500/5 hover:bg-red-500/10 px-3 py-2 rounded-lg transition-colors">
@@ -194,7 +204,6 @@
     </form>
 </div>
 
-{{-- Delete modal --}}
 <div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background:rgba(0,0,0,0.6)">
     <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
         <div class="flex items-start gap-4 mb-5">
